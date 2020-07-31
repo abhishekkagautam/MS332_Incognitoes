@@ -1,0 +1,149 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+ 
+    <!-- Custom CSS -->
+    <style>
+        body{
+            background-image:url('{%static 'back.gif'%}');
+            margin:0;
+            padding:0;
+        }
+        .inside-container
+        {
+            position:absolute;
+            height:600px;
+            width:70%;
+            margin:10% 200px 200px;
+            background-color:white;
+            border-radius:5px;
+            box-shadow:rgba(180, 173, 173,0.9),5px ,5px,0;
+        }
+
+         .inside-container .wrap-container
+        {
+            position:absolute;
+            top:35%;
+            height:80px;
+        }
+        
+         img
+        {
+            top:15px;
+            left:8%;
+            position:absolute;
+        }
+
+        h1{
+            position:absolute;
+            top:31%;
+            left:57%;
+            transform:translate(-50%,-30%);
+            text-transform:uppercase;
+            font-family:Consolas;
+            letter-spacing:5px;
+            margin:0;
+            padding:0;
+            color:transparent;
+            font-size:70px;
+            color:#f2893e;
+        }
+        h1:before{
+            content:attr(data-text);
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            color:#000;
+            overflow:hidden;
+            border-right:1px solid #000;
+            animation:typeing 7s steps(11) infinite;
+            white-space:nowrap;
+
+        }
+        .textbox1,.textbox2,.btn
+        {
+            position:absolute;
+            top:30%;
+            left:33%;
+        }
+       
+        @keyframes typeing
+        {
+            0%
+            {
+                width:0px;
+            }
+            50%
+            {
+                width:100%;
+            }
+            100%
+            {
+                width:0;
+            }
+        }
+        .box{
+            padding: 5px;
+        }
+       .buttons
+        {
+            background-color: #f2893e;
+            color: white;
+            width:140px;
+            height: 35px;
+        }
+        .r{
+            right: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="form1" > 
+        <div class="fluid-container">
+
+            <div class="inside-container">
+                 <div>
+                    <img src="{% static 'images.png' %}">
+                </div>
+            
+                <h1 data-text="Incognitoes">Incognitoes</h1> 
+                <div class="inside-container wrap-container">
+                <form method="POST" action="" >
+                    {% csrf_token %}
+                    <div class="box" >Username</div>
+                    {{form.username}}
+                    <br>
+                    <div class="box" >Password</div>
+                    {{form.password1}}
+                    <br>
+                    <div class="box" >Re-enter Password</div>
+                    {{form.password2}}
+                    <br>
+                    <br>
+                    <button type="submit" name="Create User" class="buttons"> SignUP</button>   
+                </form>
+                <div class=" inside-container wrap-container">
+                {{form.errors}}
+                </div>
+            </div>
+        
+        </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+ 
+</body>
+</html>
