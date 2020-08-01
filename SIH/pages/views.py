@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 #import cv2 as cv
 import os
 import tensorflow as tf
+from pages.models import labels
+from datetime import datetime
 def color_pred(test_image):
     color_model = load_model('models/color.h5')
     result_color = color_model.predict_classes(test_image)
@@ -42,27 +44,28 @@ def features(path):
     test_image_resnet = np.expand_dims(test_image_resnet, axis = 0)
     result_resnet = resnet_model.predict(test_image_resnet)
     label = decode_predictions(result_resnet)
-    
+    data_all=label
     data=[]
+    '''
     for element in range(len(label[0])):
         for key in valid_classes:
             if(label[0][element][1] in valid_classes[key]):
-                if(float(label[0][element][2]) >= 0.055):
+                if(float(label[0][element][2]) >= 0.05):
                     data.append(str(key))
                     break
 
     for element in range(len(label[0])):
         for key in have_glasses:
             if(label[0][element][1] in have_glasses[key]):
-                if(float(label[0][element][2]) >= 0.04):
+                if(float(label[0][element][2]) >= 0.01):
                     data.append("Yes,Wear Glasses")
                     
     for element in range(len(label[0])):
         for key in wear_necklace:
             if(label[0][element][1] in wear_necklace[key]):
-                if(float(label[0][element][2]) >= 0.05):
-                    data.append(str(key))
-    return data  
+                if(float(label[0][element][2]) >= 0.01):
+                    data.append(str(key))'''
+    return data_all 
 
 def fn_image(request):
     if request.method =="POST":
@@ -75,13 +78,20 @@ def fn_image(request):
         test_image = image.load_img(path, target_size = (64, 64))
         test_image = image.img_to_array(test_image)
         test_image = np.expand_dims(test_image, axis = 0)
-        data.append(color_pred(test_image))
-        
-        data.append(pattern_pred(test_image))
-        
-        data.append(features(path))
-    
+        now = datetime.now()
 
+        current_time = now.strftime("%H:%M:%S")
+
+
+        colors=color_pred(test_image)
+        
+        patterns=pattern_pred(test_image)
+        
+        cloth=features(path)
+        k=str(current_time)
+        k=labels(time_stamp=current_time,pattern=patterns,color=colors,cloths=cloth)
+        k.save()
+        print(data)
     return render(request,'image.html',{'prediction':'data'})
 
 
