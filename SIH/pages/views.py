@@ -6,6 +6,7 @@ from django.contrib import messages
 import cv2
 from django.core.files.storage import FileSystemStorage
 # Create your views here.
+
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -22,6 +23,33 @@ import os
 import tensorflow as tf
 from pages.models import labels
 from datetime import datetime
+import cvlib as cv
+def gender(path):
+    image=cv2.imread(path)
+    if image is None:
+        print("Could not read input image")
+        exit()
+    model = load_model("models/gender_detection.model")
+    
+    face, confidence = cv.detect_face(image)
+
+    classes = ['man','woman'] 
+    for idx, f in enumerate(face):      
+        (startX, startY) = f[0], f[1]
+        (endX, endY) = f[2], f[3]
+        cv2.rectangle(image, (startX,startY), (endX,endY), (0,255,0), 2)
+        face_crop = np.copy(image[startY:endY,startX:endX])
+        face_crop = cv2.resize(face_crop, (96,96))
+        face_crop = face_crop.astype("float") / 255.0
+        face_crop = img_to_array(face_crop)
+        face_crop = np.expand_dims(face_crop, axis=0)
+        conf = model.predict(face_crop)[0]
+        #print(conf)
+        #print(classes)
+        idx = np.argmax(conf)
+        label = classes[idx]
+        return label
+
 def color_pred(test_image):
     color_model = load_model('models/color.h5')
     result_color = color_model.predict_classes(test_image)
@@ -35,17 +63,32 @@ def pattern_pred(test_image):
     #print(prediction_pattern)
     return(prediction_pattern)
 def features(path):
-    valid_classes = {'T-shirt': ['jersey', 'T-shirt', 'tee shirt'], 'Dress':['dress', 'gown', 'overskirt', 'hoopskirt', 'stole', 'abaya', 'academic_gown', 'poncho', 'breastplate'], 'Outerwear':['jacket', 'raincoat', 'trench coat','book jacket', 'dust cover', 'dust jacket', 'dust wrapper', 'pitcher'], 'Suit':['suit','bow tie', 'bow-tie', 'bowtie','suit of clothes'], 'Shirt':['shirt'], 'Sweater':['sweater', 'sweatshirt','bulletproof_vest', 'velvet'] , 'Tank top':['blause', 'tank top', 'maillot', 'bikini', 'two-piece', 'swimming trunks', 'bathing trunks'], 'Skirt':['miniskirt', 'mini']}
-    have_glasses = {'Glasses': ['glasses', 'sunglass', 'sunglasses', 'dark glasses','shades']}
-    wear_necklace = {'Necklace': ['neck_brace','necklace']}
+    valid_classes = {
+     'T-shirt': ['jersey', 'T-shirt', 'tee shirt'], 
+     'Dress':['dress', 'gown', 'overskirt', 'hoopskirt', 'stole', 'abaya', 'academic_gown', 'poncho', 'breastplate'],
+     'Outerwear':['jacket', 'raincoat', 'trench coat','book jacket', 'dust cover', 'dust jacket', 'dust wrapper', 'pitcher'], 
+     'Suit':['suit','bow tie', 'bow-tie', 'bowtie','suit of clothes'], 'Shirt':['shirt'], 
+     'Sweater':['sweater', 'sweatshirt','bulletproof_vest', 'velvet'] , 
+     'Tank top':['blause', 'tank top', 'maillot', 'bikini', 'two-piece', 'swimming trunks', 'bathing trunks'],
+     'Skirt':['miniskirt', 'mini']
+      }
+    have_glasses = {
+        'Glasses': ['glasses', 'sunglass', 'sunglasses', 'dark glasses','shades']
+        }
+    wear_necklace = {
+        'Necklace': ['neck_brace','necklace']
+        }
     resnet_model = resnet50.ResNet50(weights='imagenet')
     test_image_resnet = image.load_img(path, target_size = (224, 224))
     test_image_resnet = image.img_to_array(test_image_resnet)
     test_image_resnet = np.expand_dims(test_image_resnet, axis = 0)
     result_resnet = resnet_model.predict(test_image_resnet)
     label = decode_predictions(result_resnet)
-    data_all=label
     data=[]
+    o=label[0]
+    data.append(o[1:])
+    
+    
     '''
     for element in range(len(label[0])):
         for key in valid_classes:
@@ -53,19 +96,21 @@ def features(path):
                 if(float(label[0][element][2]) >= 0.05):
                     data.append(str(key))
                     break
+              
 
     for element in range(len(label[0])):
         for key in have_glasses:
             if(label[0][element][1] in have_glasses[key]):
                 if(float(label[0][element][2]) >= 0.01):
                     data.append("Yes,Wear Glasses")
+    '''
                     
     for element in range(len(label[0])):
         for key in wear_necklace:
             if(label[0][element][1] in wear_necklace[key]):
                 if(float(label[0][element][2]) >= 0.01):
-                    data.append(str(key))'''
-    return data_all 
+                    data.append(str(key))
+    return data 
 
 def fn_image(request):
     if request.method =="POST":
@@ -82,6 +127,7 @@ def fn_image(request):
 
         current_time = now.strftime("%H:%M:%S")
 
+        gender_var=gender(path)
 
         colors=color_pred(test_image)
         
@@ -89,7 +135,7 @@ def fn_image(request):
         
         cloth=features(path)
         k=str(current_time)
-        k=labels(time_stamp=current_time,pattern=patterns,color=colors,cloths=cloth)
+        k=labels(time_stamp=current_time,gender=gender_var,pattern=patterns,color=colors,cloths=cloth)
         k.save()
         print(data)
     return render(request,'image.html',{'prediction':'data'})
