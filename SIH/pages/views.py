@@ -172,11 +172,15 @@ def video(request):
         fs = FileSystemStorage()
         img_name=image.name
         fs.save(image.name,image)
+        now = datetime.now()
+        today = date.today()
         cap = cv2.VideoCapture(str('media/'+str(img_name)))
         frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
         fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        out = cv2.VideoWriter("one.avi", fourcc, 5.0, (1280,720))
+        current_time = now.strftime("%H:%M:%S") 
+        current_time =  "video/"+str(today)+" ( "+str(current_time)+" )" 
+        out = cv2.VideoWriter(current_time, fourcc, 5.0, (1280,720))
         ret, frame1 = cap.read()
         ret, frame2 = cap.read()
         print(frame1.shape)
