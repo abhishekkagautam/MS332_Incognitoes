@@ -178,9 +178,9 @@ def video(request):
         frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
         fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        current_time = now.strftime("%H:%M:%S") 
-        current_time =  "video/"+str(today)+" ( "+str(current_time)+" )" 
-        out = cv2.VideoWriter(current_time, fourcc, 5.0, (1280,720))
+        time = now.strftime("%H:%M:%S") 
+        k= "video/Aone.avi"
+        out = cv2.VideoWriter(k, fourcc, 5.0, (1280,720))
         ret, frame1 = cap.read()
         ret, frame2 = cap.read()
         print(frame1.shape)
@@ -214,7 +214,9 @@ def video(request):
         cv2.destroyAllWindows()
         cap.release()
         out.release()
-    return render(request,'video.html')
+        return render(request,'video.html')
+    else:
+        return render(request,'video.html')
 def index_views(request):
     return render(request,'index.html')
 def login(request):
