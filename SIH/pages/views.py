@@ -19,6 +19,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
 #import cv2 as cv
+from datetime import date
 import os
 import tensorflow as tf
 from pages.models import labels
@@ -124,9 +125,9 @@ def fn_image(request):
         test_image = image.img_to_array(test_image)
         test_image = np.expand_dims(test_image, axis = 0)
         now = datetime.now()
-
-        current_time = now.strftime("%H:%M:%S")
-
+        today = date.today()
+        current_time = now.strftime("%H:%M:%S") 
+        current_time =  str(today)+" ( "+str(current_time)+" )" 
         gender_var=gender(path)
 
         colors=color_pred(test_image)
@@ -153,20 +154,18 @@ def search(request):
         key_2=gender(path)
         
         person="not found"
-        person = labels.objects.filter(
+        objects = labels.objects.filter(
             gender__icontains=key_2,
             
             cloths__icontains=key_1
         )
-        
-        return render(request,'search.html',{'object':person})
+        if person:
+            return render(request,'search.html',{'objects':objects})
+        else:
+            message.error(request, 'not found')
     else:
         return render(request,'search.html')
         
-
-
-
-
 def video(request):
     if request.method =="POST":
         image = request.FILES['vi']

@@ -117,7 +117,7 @@
                     
                     <input name="vi" type="file" style="left:10%;" class="textbox1"  placeholder="Enter Location "/><br />
                     
-                    <button class="btn buttons" style="left:70%;" type="submit">Extract</button>     
+                    <button class="btn buttons" style="left:70%;" type="submit">Search</button>     
                     
                     <br>
                     <br>
@@ -125,7 +125,37 @@
                     <br>
                     <center>
                         <div>
-                            {{object}}
+                            {% if messages %}
+                                <ul class="message" >
+                                    {% for k in messages %}
+                                    <li>{{k}}</li>
+                                {% endfor %}
+                                </ul>
+                                
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div style="background-color: white;">
+                                <font style="color: #f2893e;` " > <b>
+                                {% if objects %}
+                                    {%  for k in objects  %}
+                                    Time : {{ k.time_stamp}}
+                                    <br>
+                                    Gender : {{k.gender}}
+                                    <br>
+                                    Color : {{k.color}}
+                                    <br>
+                                    Pattern : {{k.pattern}}
+                                    <br>
+                                    Clothing details :{{k.cloths}}
+                                    <br>
+                                    <br>
+                                    {% endfor %}
+                                {% endif %}
+                                </b>
+                                </font>
+                                </div>
+                            
                         </div>
                     </center>
                     <br>
