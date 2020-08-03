@@ -103,18 +103,7 @@
     </style>
 </head>
 <body>
-    <div class="inside-container wrap-container">
-                    
-        <a href="video.html">
-         Motion detection 
-        </a>
-        <br>
-        <a href="image.html">
-         Image Attribute Extraction
-        </a>
-    </div> 
-
-    <form action="index" method="post" enctype="multipart/form-data" > 
+    <form action="search" method="post" enctype="multipart/form-data" > 
         {% csrf_token %}
         <div class="fluid-container">
 
@@ -126,23 +115,29 @@
                 <h1 data-text="Incognitoes">Incognitoes</h1>
                 <div class="inside-container wrap-container">
                     
-                    <a href="video">
-                        
-                    Live video marking System
-                    </a>
+                    <input name="vi" type="file" style="left:10%;" class="textbox1"  placeholder="Enter Location "/><br />
+                    
+                    <button class="btn buttons" style="left:70%;" type="submit">Extract</button>     
+                    
                     <br>
-                    <a href="image">
-                     Image Attribute Extraction
-                    </a>
-                    <a href="search">
-                        Perform a Database search
-                    </a>
+                    <br>
+                    <br>
+                    <br>
+                    <center>
+                        <div>
+                            {{object}}
+                        </div>
+                    </center>
+                    <br>
+                    <br>
+
                 </div> 
+            
             
             </div>
         
     </form>
-    
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -142,6 +142,31 @@ def fn_image(request):
 
 
 
+def search(request):
+    if request.method == "POST":
+        test_image = request.FILES['vi']
+        fs = FileSystemStorage()
+        img_name=test_image.name
+        fs.save(test_image.name,test_image)
+        path=str('media/'+str(img_name))
+        key_1=features(path)
+        key_2=gender(path)
+        
+        person="not found"
+        person = labels.objects.filter(
+            gender__icontains=key_2,
+            
+            cloths__icontains=key_1
+        )
+        
+        return render(request,'search.html',{'object':person})
+    else:
+        return render(request,'search.html')
+        
+
+
+
+
 def video(request):
     if request.method =="POST":
         image = request.FILES['vi']
